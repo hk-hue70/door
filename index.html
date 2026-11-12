@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>门牌</title>
+<style>
+body{font-family:-apple-system,system-ui,sans-serif;background:#111;color:#eee;margin:0;padding:32px 20px;line-height:1.6}
+h1{font-size:20px;margin:0 0 8px}p{color:#aaa;font-size:14px}
+a{display:block;color:#0a84ff;font-size:14px;margin:8px 0;word-break:break-all}
+code{background:#222;padding:2px 6px;border-radius:6px;font-size:13px}
+</style></head><body>
+<h1>🚪 手机门牌</h1>
+<p id="s">正在跳转到当前入口…</p>
+<div id="list"></div>
+<p style="margin-top:24px;color:#666;font-size:12px">固定地址永不失效；后端换域名会自动更新本页。</p>
+<script>
+(async () => {
+  const s = document.getElementById('s'), list = document.getElementById('list');
+  let data = null;
+  try { data = await (await fetch('./door.json?t=' + Date.now(), {cache:'no-store'})).json(); } catch (e) {}
+  const urls = (data && data.urls) || [];
+  if (!urls.length) { s.textContent = '门牌还没登记（稍等再刷新）'; return; }
+  list.innerHTML = urls.map((u, i) => `<a href="${u}">${i === 0 ? '▶ ' : '备 '}${u}</a>`).join('');
+  s.textContent = '正在进入：' + urls[0];
+  setTimeout(() => location.replace(urls[0]), 400);
+})();
+</script>
+</body></html>
